@@ -3,20 +3,22 @@ from smolagents import (
     ToolCallingAgent,
     LiteLLMModel,
     ManagedAgent,
-    DuckDuckGoSearchTool,
+    DuckDuckGoSearchTool, HfApiModel,
 )
-from smoltools.jinaai import scrape_page_with_jina_ai, search_facts_with_jina_ai
-from dotenv import load_dotenv
+#from smoltools.jinaai import scrape_page_with_jina_ai, search_facts_with_jina_ai
+from smoltools.customScraper import scrape_page_with_python
+#from dotenv import load_dotenv
 import os
 
-load_dotenv()
+#load_dotenv()
 
 # Initialize the model
-model = LiteLLMModel(model_id="gpt-4o-mini")
+model = HfApiModel()
+#model = LiteLLMModel(model_id="ollama_chat/llama3.2-vision:latest")
 
 # Research Agent
 research_agent = ToolCallingAgent(
-    tools=[scrape_page_with_jina_ai, search_facts_with_jina_ai, DuckDuckGoSearchTool()],
+    tools=[scrape_page_with_python, DuckDuckGoSearchTool()],
     model=model,
     max_steps=10,
 )
@@ -48,7 +50,7 @@ writer_agent = ToolCallingAgent(
 managed_writer_agent = ManagedAgent(
     agent=writer_agent,
     name="writer",
-    description="Writes blog posts based on the checkedresearch. Provide the research findings and desired tone/style.",
+    description="Writes blog posts based on the checked research. Provide the research findings and desired tone/style.",
 )
 
 # Copy Editor Agent
